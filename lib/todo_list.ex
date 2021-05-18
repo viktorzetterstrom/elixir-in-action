@@ -37,10 +37,15 @@ defmodule TodoList.CsvImporter do
   @spec parse(path :: String.t()) :: %TodoList{}
   def parse(path) do
     File.stream!(path)
-    |> Stream.map(&String.replace(&1, "\n", ""))
-    |> Stream.map(&String.split(&1, ","))
+    |> parse_file()
     |> Stream.map(&parse_row/1)
     |> TodoList.new()
+  end
+
+  defp parse_file(file_stream) do
+    file_stream
+    |> Stream.map(&String.replace(&1, "\n", ""))
+    |> Stream.map(&String.split(&1, ","))
   end
 
   defp parse_row([date_string, title]) do
